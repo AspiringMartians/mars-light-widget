@@ -17,7 +17,12 @@ exports.handler = async function () {
 
     const positionData = await response.json();
 
-    const distanceKm = positionData.data.table.rows[0].cells[0].distance.fromEarth.km;
+    if (!positionData.data || !positionData.data.table) {
+  throw new Error(`Unexpected API response: ${JSON.stringify(positionData)}`);
+}
+
+const distanceKm = positionData.data.table.rows[0].cells[0].distance.fromEarth.km;
+
 
     const lightSpeed = 299792.458;
     const totalSeconds = distanceKm / lightSpeed;
