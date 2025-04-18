@@ -11,8 +11,14 @@ exports.handler = async function () {
       body: JSON.stringify({ app_id: APP_ID, app_secret: APP_SECRET })
     });
 
-    const authData = await authRes.json();
-    const token = authData.data.access_token;
+const authData = await authRes.json();
+
+if (!authData.data || !authData.data.access_token) {
+  throw new Error(`Authentication failed: ${JSON.stringify(authData)}`);
+}
+
+const token = authData.data.access_token;
+
 
     const today = new Date().toISOString().split('T')[0];
     const positionRes = await fetch(`https://api.astronomyapi.com/api/v2/bodies/positions/mars?latitude=0&longitude=0&elevation=0&from_date=${today}&to_date=${today}&time=00:00:00`, {
